@@ -8,13 +8,13 @@
     - [ ] CreateUser.ts
     - [ ] LoginUser.ts
 
-- [ ] domain/
-  - [ ] entities/
-    - [ ] User.ts
-    - [ ] Role.ts
-  - [ ] repositories/
-    - [ ] UserRepository.ts
-    - [ ] RoleRepository.ts
+- [x] domain/
+  - [x] entities/
+    - [x] User.ts
+    - [x] Role.ts
+  - [x] repositories/
+    - [x] UserRepository.ts
+    - [x] RoleRepository.ts
 
 - [ ] infrastructure/
   - [ ] database/
