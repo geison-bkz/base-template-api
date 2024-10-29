@@ -7,7 +7,9 @@ export type UserProps = {
 };
 
 export class User {
-  constructor(private props: UserProps) {}
+  constructor(private props: UserProps) {
+    this.props.id = this.props.id || '';
+  }
 
   public get id() {
     return this.props.id;

@@ -1,89 +1,84 @@
 import {
   CreateUserUsecase,
   CreateUserInputDto,
-  CreateUserOutputDto,
 } from '../../../../src/application/use-cases/user/CreateUserUsecase';
 import { UserRepository } from '../../../../src/domain/repositories/UserRepository';
 import { RoleRepository } from '../../../../src/domain/repositories/RoleRepository';
+import { HashService } from '../../../../src/infrastructure/third-party/HashService';
+import { User } from '../../../../src/domain/entities/User';
+import { Role } from '../../../../src/domain/entities/Role';
 
 describe('CreateUserUsecase', () => {
-  let createUserUsecase: CreateUserUsecase;
   let userRepositoryMock: jest.Mocked<UserRepository>;
   let roleRepositoryMock: jest.Mocked<RoleRepository>;
+  let hashServiceMock: jest.Mocked<HashService>;
+  let createUserUsecase: CreateUserUsecase;
+
+  const input: CreateUserInputDto = {
+    name: 'John Doe',
+    email: 'john.doe@example.com',
+    password: 'password123',
+    roleId: crypto.randomUUID(),
+  };
+
+  const userInstance = new User({
+    id: crypto.randomUUID(), // Este ID será gerado pelo Prisma na vida real
+    name: input.name,
+    email: input.email,
+    password: 'hashed_password', // Este valor será gerado pelo HashService
+    roleId: input.roleId,
+  });
 
   beforeEach(() => {
     userRepositoryMock = {
-      save: jest.fn(),
       findByEmail: jest.fn(),
-      findById: jest.fn(),
-    } as jest.Mocked<UserRepository>;
+      save: jest.fn(),
+    } as any;
 
     roleRepositoryMock = {
-      save: jest.fn(),
-      findByName: jest.fn(),
       findById: jest.fn(),
-    } as jest.Mocked<RoleRepository>;
+    } as any;
 
-    createUserUsecase = new CreateUserUsecase(userRepositoryMock, roleRepositoryMock);
+    hashServiceMock = {
+      hashPassword: jest.fn().mockResolvedValue('hashed_password'),
+      comparePassword: jest.fn(),
+      saltRounds: 10, // Se necessário
+    } as any;
+
+    createUserUsecase = new CreateUserUsecase(
+      userRepositoryMock,
+      roleRepositoryMock,
+      hashServiceMock
+    );
   });
 
   it('deve criar um novo usuário com sucesso', async () => {
-    const input: CreateUserInputDto = {
-      name: 'John Doe',
-      email: 'john.doe@example.com',
-      password: 'plain_password',
-      roleId: 'roleId',
-    };
+    roleRepositoryMock.findById.mockResolvedValue(new Role({ id: input.roleId, name: 'admin' })); // Simula role existente
+    userRepositoryMock.findByEmail.mockResolvedValue(null); // Simula que o email não está em uso
+    userRepositoryMock.save.mockResolvedValue(userInstance); // Mock da função
 
-    roleRepositoryMock.findById.mockResolvedValue({ id: 'roleId', name: 'user' });
-    userRepositoryMock.save.mockResolvedValue({
-      id: 'userId',
-      name: input.name,
-      email: input.email,
-      password: 'hashed_password',
-      roleId: input.roleId,
-    });
-
-    const output: CreateUserOutputDto = await createUserUsecase.execute(input);
+    const output = await createUserUsecase.execute(input);
 
     expect(output).toEqual({
-      id: 'userId',
+      id: userInstance.id, // ID gerado pelo Prisma
       name: input.name,
       email: input.email,
-      password: 'hashed_password',
       roleId: input.roleId,
     });
   });
 
-  it('deve lançar um erro se o email já existir', async () => {
-    const input: CreateUserInputDto = {
-      name: 'John Doe',
-      email: 'john.doe@example.com',
-      password: 'plain_password',
-      roleId: 'roleId',
-    };
-
-    userRepositoryMock.findByEmail.mockResolvedValue({
-      id: 'existingUserId',
-      name: 'Existing User',
-      email: input.email,
-      password: 'hashed_password',
-      roleId: input.roleId,
-    });
+  it('deve lançar um erro se o email já estiver em uso', async () => {
+    userRepositoryMock.findByEmail.mockResolvedValue(userInstance); // Simula que o email já está em uso
 
     await expect(createUserUsecase.execute(input)).rejects.toThrow('Email já existe');
   });
 
-  it('deve lançar um erro se o roleId não for encontrado', async () => {
-    const input: CreateUserInputDto = {
-      name: 'John Doe',
-      email: 'john.doe@example.com',
-      password: 'plain_password',
-      roleId: 'invalidRoleId',
-    };
-
-    roleRepositoryMock.findById.mockResolvedValue(null);
+  it('deve lançar um erro se a role não existir', async () => {
+    roleRepositoryMock.findById.mockResolvedValue(null); // Simula que a role não existe
+    userRepositoryMock.findByEmail.mockResolvedValue(null); // Simula que o email não está em uso
 
     await expect(createUserUsecase.execute(input)).rejects.toThrow('Role não encontrada');
   });
+
+  // Adicione outros testes conforme necessário
 });

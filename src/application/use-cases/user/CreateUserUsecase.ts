@@ -1,15 +1,19 @@
+import { z } from 'zod';
 import { User } from '../../../domain/entities/User';
 import { UserRepository } from '../../../domain/repositories/UserRepository';
 import { RoleRepository } from '../../../domain/repositories/RoleRepository';
 import { Usecase } from '../Usecase';
-import { hashPassword } from '../../../infrastructure/third-party/HashService';
+import { HashService } from '../../../infrastructure/third-party/HashService';
 
-export type CreateUserInputDto = {
-  name: string;
-  email: string;
-  password: string;
-  roleId: string;
-};
+// Definindo o esquema de validação
+const CreateUserInputDtoSchema = z.object({
+  name: z.string().min(1, { message: 'O nome é obrigatório' }),
+  email: z.string().email({ message: 'Email inválido' }),
+  password: z.string().min(6, { message: 'A senha deve ter pelo menos 6 caracteres' }),
+  roleId: z.string().uuid({ message: 'ID da role inválido' }),
+});
+
+export type CreateUserInputDto = z.infer<typeof CreateUserInputDtoSchema>;
 
 export type CreateUserOutputDto = {
   id: string;
@@ -19,14 +23,11 @@ export type CreateUserOutputDto = {
 };
 
 export class CreateUserUsecase implements Usecase<CreateUserInputDto, CreateUserOutputDto> {
-  private constructor(
+  constructor(
     private readonly userRepository: UserRepository,
-    private readonly roleRepository: RoleRepository
+    private readonly roleRepository: RoleRepository,
+    private readonly hashService: HashService
   ) {}
-
-  public static create(userRepository: UserRepository, roleRepository: RoleRepository) {
-    return new CreateUserUsecase(userRepository, roleRepository);
-  }
 
   public async execute(input: CreateUserInputDto): Promise<CreateUserOutputDto> {
     // Verifica se o e-mail já está em uso
@@ -42,18 +43,21 @@ export class CreateUserUsecase implements Usecase<CreateUserInputDto, CreateUser
     }
 
     // Cria o usuário com a senha hasheada
-    const hashedPassword = await hashPassword(input.password);
+    const hashedPassword = await this.hashService.hashPassword(input.password);
     const aUser = new User({
+      id: '',
       name: input.name,
       email: input.email,
       password: hashedPassword,
       roleId: input.roleId,
     });
 
-    await this.userRepository.save(aUser);
+    // Salva o usuário no repositório
+    const savedUser = await this.userRepository.save(aUser);
 
+    // Retorna o output com o ID gerado
     const output: CreateUserOutputDto = {
-      id: aUser.id!,
+      id: savedUser.id!, // Aqui o ID é garantido que está definido após o save
       name: aUser.name,
       email: aUser.email,
       roleId: aUser.roleId,
