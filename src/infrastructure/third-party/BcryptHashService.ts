@@ -1,11 +1,7 @@
 import bcrypt from 'bcrypt';
+import { IHashService } from './IHashService';
 
-export interface IHashService {
-  hashPassword(password: string): Promise<string>;
-  comparePassword(password: string, hashedPassword: string): Promise<boolean>;
-}
-
-export class HashService {
+export class BcryptHashService implements IHashService {
   private readonly saltRounds: number;
 
   constructor(saltRounds: number) {

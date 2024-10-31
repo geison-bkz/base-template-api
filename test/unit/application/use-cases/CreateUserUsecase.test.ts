@@ -4,14 +4,14 @@ import {
 } from '../../../../src/application/use-cases/user/CreateUserUsecase';
 import { UserRepository } from '../../../../src/domain/repositories/UserRepository';
 import { RoleRepository } from '../../../../src/domain/repositories/RoleRepository';
-import { HashService } from '../../../../src/infrastructure/third-party/HashService';
+import { BcryptHashService } from '../../../../src/infrastructure/third-party/BcryptHashService';
 import { User } from '../../../../src/domain/entities/User';
 import { Role } from '../../../../src/domain/entities/Role';
 
 describe('CreateUserUsecase', () => {
   let userRepositoryMock: jest.Mocked<UserRepository>;
   let roleRepositoryMock: jest.Mocked<RoleRepository>;
-  let hashServiceMock: jest.Mocked<HashService>;
+  let hashServiceMock: jest.Mocked<BcryptHashService>;
   let createUserUsecase: CreateUserUsecase;
 
   const input: CreateUserInputDto = {

@@ -3,7 +3,7 @@ import { User } from '../../../domain/entities/User';
 import { UserRepository } from '../../../domain/repositories/UserRepository';
 import { RoleRepository } from '../../../domain/repositories/RoleRepository';
 import { Usecase } from '../Usecase';
-import { HashService } from '../../../infrastructure/third-party/HashService';
+import { BcryptHashService } from '../../../infrastructure/third-party/BcryptHashService';
 
 // Definindo o esquema de validação
 const CreateUserInputDtoSchema = z.object({
@@ -26,7 +26,7 @@ export class CreateUserUsecase implements Usecase<CreateUserInputDto, CreateUser
   constructor(
     private readonly userRepository: UserRepository,
     private readonly roleRepository: RoleRepository,
-    private readonly hashService: HashService
+    private readonly hashService: BcryptHashService
   ) {}
 
   public async execute(input: CreateUserInputDto): Promise<CreateUserOutputDto> {

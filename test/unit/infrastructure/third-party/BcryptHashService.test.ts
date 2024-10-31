@@ -1,11 +1,11 @@
-import { HashService } from '../../../../src/infrastructure/third-party/HashService';
+import { BcryptHashService } from '../../../../src/infrastructure/third-party/BcryptHashService';
 
 describe('HashService', () => {
-  let hashServiceMock: jest.Mocked<HashService>;
+  let hashServiceMock: jest.Mocked<BcryptHashService>;
 
   beforeEach(() => {
     const saltRounds = 10;
-    hashServiceMock = new HashService(saltRounds) as jest.Mocked<HashService>;
+    hashServiceMock = new BcryptHashService(saltRounds) as jest.Mocked<BcryptHashService>;
   });
 
   it('deve gerar um hash da senha', async () => {
