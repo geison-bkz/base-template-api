@@ -1,67 +1,42 @@
 base-template-api/
-├── prisma/                              
-│   ├── migrations/
-│   ├── schema.prisma                     
-│   └── seed.ts                   
 ├── src/
-│   ├── application/                    
+│   ├── application/
+│   │   ├── services/
+│   │   │   ├── AuthService.ts
+│   │   │   ├── UserService.ts
 │   │   ├── use-cases/
-│   │   │   ├── user/
-│   │   │   │   ├── AuthenticateUserUsecase.ts
-│   │   │   │   └── CreateUserUsecase.ts
-│   │   └── Usecase.ts                  
-│   ├── config/                         
-│   │   ├── database.ts                 
-│   │   └── env.ts                      
-│   │   └── server.ts                   
-│   ├── domain/                          
+│   │       ├── CreateUser.ts
+│   │       ├── LoginUser.ts
+│   ├── domain/
 │   │   ├── entities/
+│   │   │   ├── User.ts
 │   │   │   ├── Role.ts
-│   │   │   └── User.ts
-│   │   └── repositories/
+│   │   ├── repositories/
+│   │       ├── UserRepository.ts
 │   │       ├── RoleRepository.ts
-│   │       └── UserRepository.ts
-│   ├── infrastructure/                 
-│   │   ├── database/
-│   │   │   ├── PrismaRoleRepository.ts
-│   │   │   └── PrismaUserRepository.ts
-│   │   ├── third-party/                 
-│   │   │   ├── AuthService.ts         
-│   │   │   └── HashService.ts          
-│   ├── presentation/                   
+│   ├── infrastructure/
+│   │   ├── prisma/
+│   │       ├── PrismaUserRepository.ts
+│   │       ├── PrismaRoleRepository.ts
+│   │       ├── PrismaClient.ts
+│   ├── presentation/
 │   │   ├── controllers/
-│   │   │   ├── AuthController.ts       
-│   │   │   └── UserController.ts      
+│   │   │   ├── UserController.ts
+│   │   │   ├── AuthController.ts
 │   │   ├── middleware/
-│   │   │   ├── AuthMiddleware.ts        
-│   │   │   └── RoleMiddleware.ts       
-│   │   └── routes/
-│   │       ├── AuthRoutes.ts            
-│   │       └── UserRoutes.ts           
-├── tests/                               
-│   ├── integration/                     
-│   │   ├── application/
-│   │   │   ├── PrismaRoleRepository.test.ts
-│   │   │   ├── PrismaUserRepository.test.ts
-│   │   ├── presentation/
-│   │   │   ├── AuthController.test.ts
-│   │   │   └── UserController.test.ts
-│   ├── unit/                            
-│   │   ├── application/
-│   │   │   ├── use-cases/
-│   │   │   │   ├── AuthenticateUserUsecase.test.ts
-│   │   │   │   └── CreateUserUsecase.test.ts
-│   │   ├── domain/
-│   │   │   ├── Role.test.ts
-│   │   │   └── User.test.ts
-├── .dockerignore
-├── .env                                 
-├── .gitignore
-├── .prettierrc                         
-├── compose.yaml
+│   │   │   ├── AuthMiddleware.ts
+│   │   ├── routes/
+│   │       ├── userRoutes.ts
+│   │       ├── authRoutes.ts
+│   │       ├── protectedRoutes.ts
+│   ├── server.ts
+├── prisma/
+│   ├── migrations/
+│   ├── schema.prisma
+│   ├── seed.ts
 ├── Dockerfile
-├── jest.config.js                       
-├── package.json                        
-├── README.md
-├── TODO.md                              
-└── tsconfig.json                        
+├── docker-compose.yml
+├── package.json
+├── tsconfig.json
+├── TODO.md
+└── .env

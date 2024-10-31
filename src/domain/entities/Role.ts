@@ -1,5 +1,5 @@
 export type RoleProps = {
-  id: string;
+  id?: string;
   name: string;
 };
 
@@ -12,5 +12,9 @@ export class Role {
 
   public get name() {
     return this.props.name;
+  }
+
+  updateName(name: string) {
+    this.props.name = name;
   }
 }

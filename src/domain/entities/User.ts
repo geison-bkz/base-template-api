@@ -1,5 +1,5 @@
 export type UserProps = {
-  id: string;
+  id?: string;
   name: string;
   email: string;
   password: string;
@@ -29,5 +29,12 @@ export class User {
 
   public get roleId() {
     return this.props.roleId;
+  }
+
+  updateName(name: string) {
+    this.props.name = name;
+  }
+  updateEmail(email: string) {
+    this.props.email = email;
   }
 }
