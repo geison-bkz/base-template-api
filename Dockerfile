@@ -6,6 +6,7 @@ FROM base AS dev
 ENV NODE_ENV=dev
 RUN npm install
 COPY . .
+EXPOSE 3000
 CMD ["npm", "run", "dev"]
 
 FROM base AS prod

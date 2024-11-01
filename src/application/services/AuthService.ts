@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 
 export class AuthService {
-  private readonly jwtSecret = process.env.JWT_SECRET || 'your-secret-key';
+  private readonly jwtSecret = process.env.JWT_SECRET || 'test';
 
   public generateToken(userId: string, role: string): string {
     const payload = { userId, role };
