@@ -5,12 +5,14 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      target: ${NODE_ENV}
     ports:
       - "3000:3000"
     depends_on:
       - db
     environment:
-      DATABASE_URL: postgres://postgres:password@db:5432/mydatabase
+      NODE_ENV: ${NODE_ENV}
+      DATABASE_URL: ${DATABASE_URL}
     networks:
       - app-network
 
@@ -18,9 +20,9 @@ services:
     image: postgres:latest
     container_name: base-template-db
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: mydatabase
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     ports:
       - "5432:5432"
     volumes:
